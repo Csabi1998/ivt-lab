@@ -47,4 +47,105 @@ public class GT4500Test {
     verify(mockedTorpedoSecond, times(1)).fire(1);
   }
 
+  @Test
+  public void fireTorpedo_Single_First_Torpedo_Succes(){
+    // Arrange
+    when(mockedTorpedoFirst.fire(1)).thenReturn(true);
+    when(mockedTorpedoSecond.fire(1)).thenReturn(false);
+    when(mockedTorpedoFirst.isEmpty()).thenReturn(false);
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, result);
+    verify(mockedTorpedoFirst, times(1)).fire(1);
+    verify(mockedTorpedoSecond, times(0)).fire(1);
+  }
+
+  @Test
+  public void fireTorpedo_Single_FirstThenSecond_Torpedo_Succes(){
+    // Arrange
+    when(mockedTorpedoFirst.fire(1)).thenReturn(false);
+    when(mockedTorpedoSecond.fire(1)).thenReturn(true);
+    when(mockedTorpedoFirst.isEmpty()).thenReturn(true);
+    when(mockedTorpedoSecond.isEmpty()).thenReturn(false);
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, result);
+    verify(mockedTorpedoFirst, times(0)).fire(1);
+    verify(mockedTorpedoSecond, times(1)).fire(1);
+  }
+
+  @Test
+  public void fireTorpedo_Single_Second_Torpedo_Succes(){
+    // Arrange
+    when(mockedTorpedoFirst.fire(1)).thenReturn(true);
+    when(mockedTorpedoSecond.fire(1)).thenReturn(true);
+    when(mockedTorpedoFirst.isEmpty()).thenReturn(false);
+    when(mockedTorpedoSecond.isEmpty()).thenReturn(false);
+    // Act
+    boolean result1 = ship.fireTorpedo(FiringMode.SINGLE);
+    boolean result2 = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, result2);
+    verify(mockedTorpedoFirst, times(1)).fire(1);
+    verify(mockedTorpedoSecond, times(1)).fire(1);
+  }
+
+  @Test
+  public void fireTorpedo_Single_SecondThenFirst_Torpedo_Succes(){
+    // Arrange
+    when(mockedTorpedoFirst.fire(1)).thenReturn(true);
+    when(mockedTorpedoSecond.fire(1)).thenReturn(true);
+    when(mockedTorpedoFirst.isEmpty()).thenReturn(false, false);
+    when(mockedTorpedoSecond.isEmpty()).thenReturn(true);
+    // Act
+    boolean result1 = ship.fireTorpedo(FiringMode.SINGLE);
+    boolean result2 = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, result2);
+    verify(mockedTorpedoFirst, times(2)).fire(1);
+    verify(mockedTorpedoSecond, times(0)).fire(1);
+    verify(mockedTorpedoFirst, times(2)).isEmpty();
+  }
+
+  @Test
+  public void fireTorpedo_All_Fail(){
+    // Arrange
+    when(mockedTorpedoFirst.fire(1)).thenReturn(true);
+    when(mockedTorpedoSecond.fire(1)).thenReturn(false);
+    when(mockedTorpedoFirst.isEmpty()).thenReturn(false, true);
+    when(mockedTorpedoSecond.isEmpty()).thenReturn(false, true);
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    assertEquals(false, result);
+    verify(mockedTorpedoFirst, times(1)).fire(1);
+    verify(mockedTorpedoSecond, times(1)).fire(1);
+  }
+  @Test
+  public void fireTorpedo_Single_SecondThenFirst_Torpedo_Fail(){
+    // Arrange
+    when(mockedTorpedoFirst.fire(1)).thenReturn(true);
+    when(mockedTorpedoSecond.fire(1)).thenReturn(true);
+    when(mockedTorpedoFirst.isEmpty()).thenReturn(false, false);
+    when(mockedTorpedoSecond.isEmpty()).thenReturn(true);
+    // Act
+    boolean result1 = ship.fireTorpedo(FiringMode.SINGLE);
+
+    when(mockedTorpedoFirst.fire(1)).thenReturn(false);
+    boolean result2 = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(false, result2);
+    verify(mockedTorpedoFirst, times(2)).fire(1);
+    verify(mockedTorpedoSecond, times(0)).fire(1);
+    verify(mockedTorpedoFirst, times(2)).isEmpty();
+  }
+
 }
